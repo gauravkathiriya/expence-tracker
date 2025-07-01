@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { PlusCircle, Pencil, Trash2 } from "lucide-react"
+import { PlusCircle, Pencil, Trash2, CreditCard } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +18,9 @@ import { toast } from "@/components/ui/use-toast"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { Transaction, Category } from "@/lib/types"
+import { Skeleton } from "@/components/ui/skeleton"
+import { TransactionTableSkeleton } from "@/components/transactions/transaction-skeleton"
+import { PageHeader } from "@/components/layout/page-header"
 
 export default function ExpensesPage() {
   const [loading, setLoading] = useState(true)
@@ -94,27 +97,28 @@ export default function ExpensesPage() {
 
   return (
     <div className="container space-y-6 py-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Expenses</h1>
-        <Button asChild>
-          <Link href="/expenses/new">
-            <PlusCircle className="mr-2 h-4 w-4" /> Add Expense
-          </Link>
-        </Button>
-      </div>
+      {loading ? (
+        <TransactionTableSkeleton />
+      ) : (
+        <>
+          <PageHeader
+            title="Expenses"
+            description="Track and manage your expense transactions"
+            icon={CreditCard}
+          >
+            <Button asChild className="bg-red-600 hover:bg-red-700 text-white">
+              <Link href="/expenses/new">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Expense
+              </Link>
+            </Button>
+          </PageHeader>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>All Expenses</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="space-y-2">
-              {Array(5).fill(0).map((_, i) => (
-                <div key={i} className="h-12 animate-pulse rounded bg-muted" />
-              ))}
-            </div>
-          ) : expensesData.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>All Expenses</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {expensesData.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -172,6 +176,8 @@ export default function ExpensesPage() {
           )}
         </CardContent>
       </Card>
+      </>
+      )}
     </div>
   )
 } 

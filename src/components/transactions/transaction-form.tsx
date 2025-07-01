@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { ArrowLeft, DollarSign, Calendar, Tag, AlignLeft, ArrowUpCircle, ArrowDownCircle } from "lucide-react"
@@ -29,6 +29,7 @@ import { toast } from "@/components/ui/use-toast"
 import { supabase } from "@/lib/supabase"
 import { Category, Transaction, TransactionType } from "@/lib/types"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { TransactionFormSkeleton } from "@/components/transactions/transaction-skeleton"
 
 const transactionFormSchema = z.object({
   amount: z.string().min(1, { message: "Amount is required" }).refine(
@@ -54,6 +55,7 @@ export function TransactionForm({
   isEditing = false 
 }: TransactionFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isFormLoading, setIsFormLoading] = useState<boolean>(true)
   const router = useRouter()
 
   const title = category === Category.Income ? "Income" : "Expense"
@@ -80,6 +82,14 @@ export function TransactionForm({
     resolver: zodResolver(transactionFormSchema),
     defaultValues,
   })
+  
+  useEffect(() => {
+    // Simulate form loading
+    const timer = setTimeout(() => {
+      setIsFormLoading(false)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   async function onSubmit(values: z.infer<typeof transactionFormSchema>) {
     try {
@@ -151,8 +161,11 @@ export function TransactionForm({
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {isFormLoading ? (
+          <TransactionFormSkeleton />
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="amount"
@@ -285,6 +298,7 @@ export function TransactionForm({
             </div>
           </form>
         </Form>
+        )}
       </CardContent>
     </Card>
   )
