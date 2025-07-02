@@ -21,10 +21,21 @@ import { Transaction, Category } from "@/lib/types"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TransactionTableSkeleton } from "@/components/transactions/transaction-skeleton"
 import { PageHeader } from "@/components/layout/page-header"
+import { FilterOptions, TransactionFilters } from "@/components/transactions/transaction-filters"
+import { ExportData } from "@/components/transactions/export-data"
 
 export default function IncomePage() {
   const [loading, setLoading] = useState(true)
   const [incomeData, setIncomeData] = useState<Transaction[]>([])
+  const [filteredData, setFilteredData] = useState<Transaction[]>([])
+  const [filters, setFilters] = useState<FilterOptions>({
+    startDate: "",
+    endDate: "",
+    type: "all",
+    category: Category.Income,
+    sortBy: "date",
+    sortOrder: "desc"
+  })
 
   const fetchData = async () => {
     try {
@@ -47,6 +58,7 @@ export default function IncomePage() {
       }
 
       setIncomeData(data as Transaction[])
+      setFilteredData(data as Transaction[])
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -61,6 +73,64 @@ export default function IncomePage() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (incomeData.length > 0) {
+      applyFilters()
+    }
+  }, [filters, incomeData])
+
+  const applyFilters = () => {
+    let result = [...incomeData]
+
+    // Filter by date range
+    if (filters.startDate) {
+      result = result.filter(income => 
+        new Date(income.date) >= new Date(filters.startDate)
+      )
+    }
+
+    if (filters.endDate) {
+      result = result.filter(income => 
+        new Date(income.date) <= new Date(filters.endDate)
+      )
+    }
+
+    // Filter by type
+    if (filters.type !== "all") {
+      result = result.filter(income => income.type === filters.type)
+    }
+
+    // Sort by selected field
+    result.sort((a, b) => {
+      if (filters.sortBy === "date") {
+        return filters.sortOrder === "asc" 
+          ? new Date(a.date).getTime() - new Date(b.date).getTime()
+          : new Date(b.date).getTime() - new Date(a.date).getTime()
+      } else {
+        return filters.sortOrder === "asc"
+          ? a.amount - b.amount
+          : b.amount - a.amount
+      }
+    })
+
+    setFilteredData(result)
+  }
+
+  const handleFilterChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters)
+  }
+
+  const resetFilters = () => {
+    setFilters({
+      startDate: "",
+      endDate: "",
+      type: "all",
+      category: Category.Income,
+      sortBy: "date",
+      sortOrder: "desc"
+    })
+  }
 
   const handleDelete = async (id: string) => {
     try {
@@ -106,19 +176,33 @@ export default function IncomePage() {
             description="Track and manage your income transactions"
             icon={TrendingUp}
           >
-            <Button asChild className="bg-green-600 hover:bg-green-700 text-white">
-              <Link href="/income/new">
-                <PlusCircle className="mr-2 h-4 w-4" /> Add Income
-              </Link>
-            </Button>
+            <div className="flex items-center gap-3">
+              <ExportData data={filteredData} filename="income" />
+              <Button asChild className="bg-green-600 hover:bg-green-700 text-white">
+                <Link href="/income/new">
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Income
+                </Link>
+              </Button>
+            </div>
           </PageHeader>
+
+          <TransactionFilters 
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onReset={resetFilters}
+          />
 
           <Card>
             <CardHeader>
-              <CardTitle>All Income</CardTitle>
+              <CardTitle className="flex justify-between">
+                <span>All Income</span>
+                <span className="text-sm font-normal text-muted-foreground">
+                  {filteredData.length} {filteredData.length === 1 ? 'income' : 'incomes'} found
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              {incomeData.length > 0 ? (
+              {filteredData.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -130,7 +214,7 @@ export default function IncomePage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {incomeData.map((income) => (
+                    {filteredData.map((income) => (
                       <TableRow key={income.id}>
                         <TableCell>{formatDate(income.date)}</TableCell>
                         <TableCell>{income.description || "-"}</TableCell>
@@ -168,9 +252,9 @@ export default function IncomePage() {
                 </Table>
               ) : (
                 <div className="text-center py-6">
-                  <p className="text-muted-foreground">No income entries yet.</p>
-                  <Button asChild variant="link" className="mt-2">
-                    <Link href="/income/new">Add your first income</Link>
+                  <p className="text-muted-foreground">No income entries found with the current filters.</p>
+                  <Button onClick={resetFilters} variant="link" className="mt-2">
+                    Reset filters
                   </Button>
                 </div>
               )}

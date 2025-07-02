@@ -4,20 +4,31 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency } from "@/lib/utils"
-import { Transaction, Category } from "@/lib/types"
+import { Transaction, Category, TransactionType } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { PlusCircle, ArrowUpCircle, ArrowDownCircle, BarChart3, Clock, TrendingUp, DollarSign, CreditCard, LayoutDashboard } from "lucide-react"
+import { PlusCircle, ArrowUpCircle, ArrowDownCircle, BarChart3, Clock, TrendingUp, DollarSign, CreditCard, LayoutDashboard, ChartBar } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DashboardStatsSkeleton, RecentTransactionsSkeleton } from "@/components/transactions/transaction-skeleton"
 import { PageHeader } from "@/components/layout/page-header"
+import { ChartCards } from "@/components/dashboard/chart-cards"
+import { ExportData } from "@/components/transactions/export-data"
+
+// Helper to format month names
+const getMonthName = (monthIndex: number) => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return months[monthIndex];
+};
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [totalIncome, setTotalIncome] = useState(0)
   const [totalExpense, setTotalExpense] = useState(0)
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([])
+  const [monthlyData, setMonthlyData] = useState<any[]>([])
+  const [categoryData, setCategoryData] = useState<any[]>([])
+  const [showCharts, setShowCharts] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,46 +40,39 @@ export default function DashboardPage() {
           return
         }
 
-        // Fetch total income
-        const { data: incomeData, error: incomeError } = await supabase
-          .from('transactions')
-          .select('amount')
-          .eq('user_id', user.id)
-          .eq('category', Category.Income)
-
-        if (incomeError) {
-          throw incomeError
-        }
-
-        // Fetch total expense
-        const { data: expenseData, error: expenseError } = await supabase
-          .from('transactions')
-          .select('amount')
-          .eq('user_id', user.id)
-          .eq('category', Category.Expense)
-
-        if (expenseError) {
-          throw expenseError
-        }
-
-        // Fetch recent transactions
-        const { data: recentData, error: recentError } = await supabase
+        // Fetch all transactions
+        const { data: transactions, error: transactionsError } = await supabase
           .from('transactions')
           .select('*')
           .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(5)
-
-        if (recentError) {
-          throw recentError
+        
+        if (transactionsError) {
+          throw transactionsError
         }
 
-        const incomeTotal = incomeData?.reduce((sum, item) => sum + Number(item.amount), 0) || 0
-        const expenseTotal = expenseData?.reduce((sum, item) => sum + Number(item.amount), 0) || 0
+        const typedTransactions = transactions as Transaction[]
+
+        // Calculate totals
+        const incomeTotal = typedTransactions
+          .filter(t => t.category === Category.Income)
+          .reduce((sum, item) => sum + Number(item.amount), 0)
+        
+        const expenseTotal = typedTransactions
+          .filter(t => t.category === Category.Expense)
+          .reduce((sum, item) => sum + Number(item.amount), 0)
 
         setTotalIncome(incomeTotal)
         setTotalExpense(expenseTotal)
-        setRecentTransactions(recentData as Transaction[])
+
+        // Get recent transactions
+        const recentData = [...typedTransactions]
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 5)
+        
+        setRecentTransactions(recentData)
+
+        // Process transactions for charts
+        processTransactionsForCharts(typedTransactions)
       } catch (error: any) {
         toast({
           variant: "destructive",
@@ -83,6 +87,66 @@ export default function DashboardPage() {
     fetchData()
   }, [])
 
+  const processTransactionsForCharts = (transactions: Transaction[]) => {
+    // Process monthly data
+    const monthlyDataMap = new Map<string, { income: number, expense: number }>()
+    
+    // Get current month and the last 5 months
+    const today = new Date()
+    for (let i = 0; i < 6; i++) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1)
+      const monthYear = `${getMonthName(date.getMonth())} ${date.getFullYear()}`
+      monthlyDataMap.set(monthYear, { income: 0, expense: 0 })
+    }
+
+    // Populate monthly data
+    transactions.forEach(transaction => {
+      const transDate = new Date(transaction.date)
+      const monthYear = `${getMonthName(transDate.getMonth())} ${transDate.getFullYear()}`
+      
+      if (monthlyDataMap.has(monthYear)) {
+        const current = monthlyDataMap.get(monthYear)!
+        if (transaction.category === Category.Income) {
+          current.income += Number(transaction.amount)
+        } else {
+          current.expense += Number(transaction.amount)
+        }
+        monthlyDataMap.set(monthYear, current)
+      }
+    })
+
+    // Convert map to array for recharts and add savings
+    const monthlyDataArray = Array.from(monthlyDataMap.entries())
+      .map(([month, data]) => ({
+        month,
+        income: data.income,
+        expense: data.expense,
+        savings: data.income - data.expense
+      }))
+      .reverse() // Show earliest month first
+
+    setMonthlyData(monthlyDataArray)
+
+    // Process category data for pie chart
+    const expensesByType = new Map<TransactionType, number>()
+    
+    transactions
+      .filter(t => t.category === Category.Expense)
+      .forEach(transaction => {
+        const currentAmount = expensesByType.get(transaction.type) || 0
+        expensesByType.set(transaction.type, currentAmount + Number(transaction.amount))
+      })
+    
+    const categoryDataArray = Array.from(expensesByType.entries())
+      .map(([type, value]) => ({
+        name: type.charAt(0).toUpperCase() + type.slice(1), // Capitalize first letter
+        value
+      }))
+      .filter(item => item.value > 0) // Only include categories with spending
+    
+    setCategoryData(categoryDataArray)
+  }
+
   return (
     <div className="container space-y-8 py-8">
       <PageHeader
@@ -90,16 +154,19 @@ export default function DashboardPage() {
         description="Manage your finances and track your spending"
         icon={LayoutDashboard}
       >
-        <Button asChild variant="default" className="bg-green-600 hover:bg-green-700 text-white">
-          <Link href="/income/new">
-            <ArrowUpCircle className="mr-2 h-4 w-4" /> Add Income
-          </Link>
-        </Button>
-        <Button asChild variant="default" className="bg-red-600 hover:bg-red-700 text-white">
-          <Link href="/expenses/new">
-            <ArrowDownCircle className="mr-2 h-4 w-4" /> Add Expense
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <ExportData data={recentTransactions} filename="all_transactions" />
+          <Button asChild variant="default" className="bg-green-600 hover:bg-green-700 text-white">
+            <Link href="/income/new">
+              <ArrowUpCircle className="mr-2 h-4 w-4" /> Add Income
+            </Link>
+          </Button>
+          <Button asChild variant="default" className="bg-red-600 hover:bg-red-700 text-white">
+            <Link href="/expenses/new">
+              <ArrowDownCircle className="mr-2 h-4 w-4" /> Add Expense
+            </Link>
+          </Button>
+        </div>
       </PageHeader>
 
       {loading ? (
@@ -158,6 +225,26 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold tracking-tight flex items-center">
+          <ChartBar className="mr-2 h-5 w-5" /> Analytics
+        </h2>
+        <Button
+          variant="outline"
+          onClick={() => setShowCharts(!showCharts)}
+        >
+          {showCharts ? "Hide Charts" : "Show Charts"}
+        </Button>
+      </div>
+
+      {showCharts && (
+        <ChartCards 
+          monthlyData={monthlyData} 
+          categoryData={categoryData} 
+          isLoading={loading} 
+        />
       )}
 
       <Card className="border-none shadow-md overflow-hidden">
