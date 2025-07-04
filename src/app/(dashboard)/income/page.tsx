@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import Link from "next/link"
 import { PlusCircle, Pencil, Trash2, TrendingUp } from "lucide-react"
 
@@ -73,13 +73,7 @@ export default function IncomePage() {
     fetchData()
   }, [])
 
-  useEffect(() => {
-    if (incomeData.length > 0) {
-      applyFilters()
-    }
-  }, [filters, incomeData])
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let result = [...incomeData]
 
     // Filter by date range
@@ -114,7 +108,13 @@ export default function IncomePage() {
     })
 
     setFilteredData(result)
-  }
+  }, [filters, incomeData])
+
+  useEffect(() => {
+    if (incomeData.length > 0) {
+      applyFilters()
+    }
+  }, [filters, incomeData, applyFilters])
 
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters(newFilters)

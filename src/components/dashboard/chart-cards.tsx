@@ -1,18 +1,18 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  BarChart, 
-  ResponsiveContainer, 
-  XAxis, 
-  YAxis, 
-  Bar, 
-  CartesianGrid, 
+import {
+  BarChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Bar,
+  CartesianGrid,
   Tooltip,
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
 } from "recharts"
 import { formatCurrency } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -20,18 +20,20 @@ import { useState } from "react"
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
-export function ChartCards({ 
-  monthlyData, 
-  categoryData, 
-  isLoading 
-}: { 
-  monthlyData: Record<string, any>[], 
-  categoryData: Record<string, any>[],
+type ChartData = Record<string, string | number>;
+
+export function ChartCards({
+  monthlyData,
+  categoryData,
+  isLoading
+}: {
+  monthlyData: ChartData[],
+  categoryData: ChartData[],
   isLoading: boolean
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const handlePieEnter = (_: any, index: number) => {
+  const handlePieEnter = (_: unknown, index: number) => {
     setActiveIndex(index);
   };
 
@@ -84,47 +86,47 @@ export function ChartCards({
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                <XAxis 
-                  dataKey="month" 
-                  tick={{ fontSize: 12 }} 
+                <XAxis
+                  dataKey="month"
+                  tick={{ fontSize: 12 }}
                   axisLine={{ stroke: '#eee' }}
                   tickLine={false}
                 />
-                <YAxis 
+                <YAxis
                   tickFormatter={(value) => `$${Math.abs(value)}`}
                   tick={{ fontSize: 12 }}
                   axisLine={{ stroke: '#eee' }}
                   tickLine={false}
                 />
-                <Tooltip 
+                <Tooltip
                   formatter={(value) => [`${formatCurrency(Number(value))}`, ""]}
-                  contentStyle={{ 
+                  contentStyle={{
                     borderRadius: '8px',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                     border: 'none',
                   }}
                   cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                 />
-                <Bar 
-                  dataKey="income" 
-                  name="Income" 
-                  fill="#4ade80" 
+                <Bar
+                  dataKey="income"
+                  name="Income"
+                  fill="#4ade80"
                   radius={[4, 4, 0, 0]}
                   barSize={30}
                   animationDuration={1500}
                 />
-                <Bar 
-                  dataKey="expense" 
-                  name="Expense" 
-                  fill="#f87171" 
+                <Bar
+                  dataKey="expense"
+                  name="Expense"
+                  fill="#f87171"
                   radius={[4, 4, 0, 0]}
                   barSize={30}
                   animationDuration={1500}
                 />
-                <Bar 
-                  dataKey="savings" 
-                  name="Savings" 
-                  fill="#60a5fa" 
+                <Bar
+                  dataKey="savings"
+                  name="Savings"
+                  fill="#60a5fa"
                   radius={[4, 4, 0, 0]}
                   barSize={30}
                   animationDuration={1500}
@@ -149,7 +151,42 @@ export function ChartCards({
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={renderCustomizedLabel}
+                  label={(props) => {
+                    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value } = props;
+                    if (cx === undefined || cy === undefined || midAngle === undefined ||
+                      innerRadius === undefined || outerRadius === undefined ||
+                      percent === undefined || index === undefined) {
+                      return null;
+                    }
+
+                    const RADIAN = Math.PI / 180;
+                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+                    const isActive = index === activeIndex;
+
+                    if (percent < 0.05 && !isActive) {
+                      return null;
+                    }
+
+                    return (
+                      <text
+                        x={x}
+                        y={y}
+                        fill="white"
+                        textAnchor={x > cx ? 'start' : 'end'}
+                        dominantBaseline="central"
+                        className="text-xs font-medium"
+                        style={{
+                          fontWeight: isActive ? 'bold' : 'normal',
+                          fontSize: isActive ? '12px' : '10px',
+                        }}
+                      >
+                        {isActive ? `${String(name)}: ${formatCurrency(Number(value))}` : `${(percent * 100).toFixed(0)}%`}
+                      </text>
+                    );
+                  }}
                   outerRadius={120}
                   innerRadius={60}
                   fill="#8884d8"
@@ -160,9 +197,9 @@ export function ChartCards({
                   onMouseLeave={handlePieLeave}
                 >
                   {categoryData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={COLORS[index % COLORS.length]} 
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
                       stroke="#fff"
                       strokeWidth={index === activeIndex ? 2 : 1}
                       style={{
@@ -172,20 +209,23 @@ export function ChartCards({
                     />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   formatter={(value) => formatCurrency(Number(value))}
-                  contentStyle={{ 
+                  contentStyle={{
                     borderRadius: '8px',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                     border: 'none',
                   }}
                 />
-                <Legend 
-                  layout="horizontal" 
-                  verticalAlign="bottom" 
+                <Legend
+                  layout="horizontal"
+                  verticalAlign="bottom"
                   align="center"
-                  formatter={(value, entry, index) => (
-                    <span style={{ color: COLORS[index % COLORS.length], fontWeight: index === activeIndex ? 'bold' : 'normal' }}>
+                  formatter={(value: string) => (
+                    <span style={{
+                      color: COLORS[categoryData.findIndex(item => item.name === value) % COLORS.length],
+                      fontWeight: categoryData.findIndex(item => item.name === value) === activeIndex ? 'bold' : 'normal'
+                    }}>
                       {value}
                     </span>
                   )}
@@ -204,35 +244,4 @@ export function ChartCards({
       </Card>
     </div>
   )
-  
-  function renderCustomizedLabel(props: any) {
-    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value } = props;
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    
-    const isActive = index === activeIndex;
-    
-    if (percent < 0.05 && !isActive) {
-      return null;
-    }
-  
-    return (
-      <text 
-        x={x} 
-        y={y} 
-        fill="white" 
-        textAnchor={x > cx ? 'start' : 'end'} 
-        dominantBaseline="central"
-        className="text-xs font-medium"
-        style={{
-          fontWeight: isActive ? 'bold' : 'normal',
-          fontSize: isActive ? '12px' : '10px',
-        }}
-      >
-        {isActive ? `${name}: ${formatCurrency(Number(value))}` : `${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  }
 } 

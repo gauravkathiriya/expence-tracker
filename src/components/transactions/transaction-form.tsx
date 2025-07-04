@@ -28,7 +28,7 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { supabase } from "@/lib/supabase"
 import { Category, Transaction, TransactionType } from "@/lib/types"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TransactionFormSkeleton } from "@/components/transactions/transaction-skeleton"
 
 const transactionFormSchema = z.object({
@@ -134,11 +134,11 @@ export function TransactionForm({
       // Redirect based on transaction category
       router.push(category === Category.Income ? "/income" : "/expenses")
       router.refresh()
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       })
     } finally {
       setIsLoading(false)

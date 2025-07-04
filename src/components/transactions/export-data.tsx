@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { toast } from '@/components/ui/use-toast'
 import { Transaction } from '@/lib/types'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { stringify } from 'csv-stringify/sync'
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -131,7 +131,7 @@ export function ExportData({ data, filename = 'transactions' }: ExportDataProps)
         const balance = totalIncome - totalExpense
 
         // Access final Y position
-        const finalY = (doc as any).lastAutoTable.finalY + 10
+        const finalY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
 
         doc.setFontSize(12)
         doc.text('Summary', 14, finalY)

@@ -1,0 +1,9 @@
+# Generated files
+src/lib/database.types.ts
+
+# Next.js build output
+.next/
+out/
+
+# Node modules
+node_modules/ 

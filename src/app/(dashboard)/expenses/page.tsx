@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import Link from "next/link"
 import { PlusCircle, Pencil, Trash2, CreditCard } from "lucide-react"
 
@@ -73,13 +73,7 @@ export default function ExpensesPage() {
     fetchData()
   }, [])
 
-  useEffect(() => {
-    if (expensesData.length > 0) {
-      applyFilters()
-    }
-  }, [filters, expensesData])
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let result = [...expensesData]
 
     // Filter by date range
@@ -114,7 +108,13 @@ export default function ExpensesPage() {
     })
 
     setFilteredData(result)
-  }
+  }, [filters, expensesData])
+
+  useEffect(() => {
+    if (expensesData.length > 0) {
+      applyFilters()
+    }
+  }, [filters, expensesData, applyFilters])
 
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters(newFilters)

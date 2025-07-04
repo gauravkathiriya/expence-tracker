@@ -31,7 +31,7 @@ export function TransactionFilters({
 }: TransactionFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const handleChange = (key: keyof FilterOptions, value: any) => {
+  const handleChange = (key: keyof FilterOptions, value: string) => {
     onFilterChange({
       ...filters,
       [key]: value
