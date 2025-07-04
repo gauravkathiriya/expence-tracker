@@ -1,0 +1,95 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { TransactionForm } from "@/components/transactions/transaction-form"
+import { Category, Transaction } from "@/lib/types"
+import { supabase } from "@/lib/supabase"
+import { toast } from "@/components/ui/use-toast"
+
+export function EditIncomeClient({ id }: { id: string }) {
+  const [transaction, setTransaction] = useState<Transaction | null>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const fetchTransaction = async () => {
+      try {
+        setLoading(true)
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+          router.push("/login")
+          return
+        }
+
+        const { data, error } = await supabase
+          .from("transactions")
+          .select("*")
+          .eq("id", id)
+          .eq("user_id", user.id)
+          .eq("category", Category.Income)
+          .single()
+
+        if (error) {
+          throw error
+        }
+
+        if (!data) {
+          toast({
+            variant: "destructive",
+            title: "Not found",
+            description: "The requested income entry was not found.",
+          })
+          router.push("/income")
+          return
+        }
+
+        setTransaction(data as Transaction)
+      } catch (error: unknown) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error instanceof Error ? error.message : "An unknown error occurred",
+        })
+        router.push("/income")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTransaction()
+  }, [id, router])
+
+  if (loading) {
+    return (
+      <div className="container py-8">
+        <div className="space-y-2">
+          <div className="h-8 w-1/3 animate-pulse rounded bg-muted" />
+          <div className="h-64 animate-pulse rounded bg-muted" />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="container py-8">
+      <h1 className="text-3xl font-bold mb-6">Edit Income</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>Income Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {transaction && (
+            <TransactionForm 
+              category={Category.Income} 
+              initialData={transaction}
+              isEditing={true}
+            />
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+} 
