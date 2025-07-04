@@ -173,9 +173,9 @@ export default function DashboardPage() {
         <DashboardStatsSkeleton />
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="overflow-hidden border-none shadow-md transition-all hover:shadow-lg">
-            <div className="absolute right-2 top-2 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-green-600" />
+          <Card className="overflow-hidden border-none shadow-md rounded-xl transition-all hover:shadow-lg">
+            <div className="absolute right-2 top-2 h-12 w-12 rounded-full bg-green-100 flex items-center justify-center shadow-sm">
+              <TrendingUp className="h-6 w-6 text-green-600" />
             </div>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium">Total Income</CardTitle>
@@ -190,9 +190,9 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="overflow-hidden border-none shadow-md transition-all hover:shadow-lg">
-            <div className="absolute right-2 top-2 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-              <CreditCard className="h-5 w-5 text-red-600" />
+          <Card className="overflow-hidden border-none shadow-md rounded-xl transition-all hover:shadow-lg">
+            <div className="absolute right-2 top-2 h-12 w-12 rounded-full bg-red-100 flex items-center justify-center shadow-sm">
+              <CreditCard className="h-6 w-6 text-red-600" />
             </div>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium">Total Expense</CardTitle>
@@ -207,9 +207,9 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="overflow-hidden border-none shadow-md transition-all hover:shadow-lg">
-            <div className="absolute right-2 top-2 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-              <DollarSign className="h-5 w-5 text-blue-600" />
+          <Card className="overflow-hidden border-none shadow-md rounded-xl transition-all hover:shadow-lg">
+            <div className="absolute right-2 top-2 h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center shadow-sm">
+              <DollarSign className="h-6 w-6 text-blue-600" />
             </div>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium">Balance</CardTitle>
@@ -234,6 +234,7 @@ export default function DashboardPage() {
         <Button
           variant="outline"
           onClick={() => setShowCharts(!showCharts)}
+          className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 dark:from-blue-950 dark:to-purple-950 dark:hover:from-blue-900 dark:hover:to-purple-900 border-blue-200 dark:border-blue-800"
         >
           {showCharts ? "Hide Charts" : "Show Charts"}
         </Button>
@@ -247,30 +248,19 @@ export default function DashboardPage() {
         />
       )}
 
-      <Card className="border-none shadow-md overflow-hidden">
+      <Card className="border-none shadow-md rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <CardTitle className="text-xl">Recent Transactions</CardTitle>
+          <CardDescription className="text-blue-100">
+            Your most recent income and expense entries
+          </CardDescription>
+        </CardHeader>
         {loading ? (
           <div className="p-6">
             <RecentTransactionsSkeleton />
           </div>
         ) : (
           <>
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center">
-                    <Clock className="mr-2 h-5 w-5 text-blue-600" /> Recent Transactions
-                  </CardTitle>
-                  <CardDescription>Your recent 5 transactions</CardDescription>
-                </div>
-                {recentTransactions.length > 0 && (
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href={recentTransactions[0]?.category === Category.Income ? "/income" : "/expenses"}>
-                      View All
-                    </Link>
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
             <CardContent className="p-0">
               {recentTransactions.length > 0 ? (
                 <div className="divide-y">

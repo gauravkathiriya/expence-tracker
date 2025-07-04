@@ -2,8 +2,43 @@
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
   email TEXT NOT NULL,
+  full_name TEXT,
+  avatar_url TEXT,
+  bio TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
 );
+
+-- Create storage bucket for profile images
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('profile-images', 'profile-images', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Create policy to allow authenticated users to upload profile images
+CREATE POLICY "Allow authenticated users to upload avatar images"
+ON storage.objects
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'profile-images' AND
+  auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Create policy to allow users to update their own avatar
+CREATE POLICY "Allow users to update their own avatar"
+ON storage.objects
+FOR UPDATE
+TO authenticated
+USING (
+  bucket_id = 'profile-images' AND
+  auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Create policy to allow public access to profile images
+CREATE POLICY "Allow public access to profile images"
+ON storage.objects
+FOR SELECT
+TO public
+USING (bucket_id = 'profile-images');
 
 -- Create transactions table (for both income and expense)
 CREATE TYPE transaction_category AS ENUM ('income', 'expense');

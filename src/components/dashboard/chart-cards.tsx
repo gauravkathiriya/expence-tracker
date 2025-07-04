@@ -1,161 +1,235 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   BarChart, 
-  Bar, 
+  ResponsiveContainer, 
   XAxis, 
   YAxis, 
-  Tooltip, 
-  ResponsiveContainer,
+  Bar, 
+  CartesianGrid, 
+  Tooltip,
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line,
   Legend
 } from "recharts"
 import { formatCurrency } from "@/lib/utils"
-import { Category, TransactionType } from "@/lib/types"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useState } from "react"
 
-type MonthlyData = {
-  month: string
-  income: number
-  expense: number
-  savings: number
-}
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
-type CategoryData = {
-  name: string
-  value: number
-}
+export function ChartCards({ 
+  monthlyData, 
+  categoryData, 
+  isLoading 
+}: { 
+  monthlyData: any[], 
+  categoryData: any[],
+  isLoading: boolean
+}) {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-type ChartCardsProps = {
-  monthlyData: MonthlyData[]
-  categoryData: CategoryData[]
-  isLoading?: boolean
-}
-
-// Pie chart colors
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
-
-export function ChartCards({ monthlyData, categoryData, isLoading = false }: ChartCardsProps) {
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background border p-2 rounded-md shadow-sm">
-          <p className="font-medium">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }}>
-              {entry.name}: {formatCurrency(entry.value)}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
+  const handlePieEnter = (_: any, index: number) => {
+    setActiveIndex(index);
   };
 
-  const PieCustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background border p-2 rounded-md shadow-sm">
-          <p className="font-medium">{payload[0].name}</p>
-          <p style={{ color: payload[0].color }}>
-            {formatCurrency(payload[0].value)}
-          </p>
-        </div>
-      );
+  const handlePieLeave = () => {
+    setActiveIndex(null);
+  };
+
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value }: any) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    const isActive = index === activeIndex;
+    
+    if (percent < 0.05 && !isActive) {
+      return null;
     }
-    return null;
+  
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="white" 
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        className="text-xs font-medium"
+        style={{
+          fontWeight: isActive ? 'bold' : 'normal',
+          fontSize: isActive ? '12px' : '10px',
+        }}
+      >
+        {isActive ? `${name}: ${formatCurrency(value)}` : `${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
   };
 
   if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="min-h-[400px] animate-pulse bg-muted/10" />
-        <Card className="min-h-[400px] animate-pulse bg-muted/10" />
-        <Card className="min-h-[400px] animate-pulse bg-muted/10" />
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-xl">Monthly Overview</CardTitle>
+            <CardDescription>Your income and expenses by month</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-[300px] w-full" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-xl">Expense Breakdown</CardTitle>
+            <CardDescription>How you're spending your money</CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Skeleton className="h-[300px] w-[300px] rounded-full" />
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle>Monthly Income vs Expense</CardTitle>
+    <div className="grid gap-6 md:grid-cols-2">
+      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white space-y-1">
+          <CardTitle className="text-xl">Monthly Overview</CardTitle>
+          <CardDescription className="text-blue-100">Your income and expenses by month</CardDescription>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={monthlyData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <XAxis dataKey="month" />
-              <YAxis tickFormatter={(value) => `$${value}`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar dataKey="income" fill="#10b981" name="Income" />
-              <Bar dataKey="expense" fill="#ef4444" name="Expense" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle>Category-wise Spending</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={categoryData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                fill="#8884d8"
-                paddingAngle={2}
-                dataKey="value"
-                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                labelLine={false}
+        <CardContent className="p-6">
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={monthlyData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
               >
-                {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip content={<PieCustomTooltip />} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fontSize: 12 }} 
+                  axisLine={{ stroke: '#eee' }}
+                  tickLine={false}
+                />
+                <YAxis 
+                  tickFormatter={(value) => `$${Math.abs(value)}`}
+                  tick={{ fontSize: 12 }}
+                  axisLine={{ stroke: '#eee' }}
+                  tickLine={false}
+                />
+                <Tooltip 
+                  formatter={(value) => [`${formatCurrency(Number(value))}`, ""]}
+                  contentStyle={{ 
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    border: 'none',
+                  }}
+                  cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
+                />
+                <Bar 
+                  dataKey="income" 
+                  name="Income" 
+                  fill="#4ade80" 
+                  radius={[4, 4, 0, 0]}
+                  barSize={30}
+                  animationDuration={1500}
+                />
+                <Bar 
+                  dataKey="expense" 
+                  name="Expense" 
+                  fill="#f87171" 
+                  radius={[4, 4, 0, 0]}
+                  barSize={30}
+                  animationDuration={1500}
+                />
+                <Bar 
+                  dataKey="savings" 
+                  name="Savings" 
+                  fill="#60a5fa" 
+                  radius={[4, 4, 0, 0]}
+                  barSize={30}
+                  animationDuration={1500}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle>Monthly Savings</CardTitle>
+      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white space-y-1">
+          <CardTitle className="text-xl">Expense Breakdown</CardTitle>
+          <CardDescription className="text-purple-100">How you're spending your money</CardDescription>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={monthlyData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <XAxis dataKey="month" />
-              <YAxis tickFormatter={(value) => `$${value}`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="savings" 
-                stroke="#3b82f6" 
-                activeDot={{ r: 8 }} 
-                name="Savings"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <CardContent className="p-6 flex flex-col items-center">
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={renderCustomizedLabel}
+                  outerRadius={120}
+                  innerRadius={60}
+                  fill="#8884d8"
+                  dataKey="value"
+                  animationDuration={1500}
+                  animationBegin={200}
+                  onMouseEnter={handlePieEnter}
+                  onMouseLeave={handlePieLeave}
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={COLORS[index % COLORS.length]} 
+                      stroke="#fff"
+                      strokeWidth={index === activeIndex ? 2 : 1}
+                      style={{
+                        filter: index === activeIndex ? 'drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.3))' : 'none',
+                        opacity: activeIndex === null || activeIndex === index ? 1 : 0.7,
+                      }}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value) => formatCurrency(Number(value))}
+                  contentStyle={{ 
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    border: 'none',
+                  }}
+                />
+                <Legend 
+                  layout="horizontal" 
+                  verticalAlign="bottom" 
+                  align="center"
+                  formatter={(value, entry, index) => (
+                    <span style={{ color: COLORS[index % COLORS.length], fontWeight: index === activeIndex ? 'bold' : 'normal' }}>
+                      {value}
+                    </span>
+                  )}
+                  onMouseEnter={(data) => {
+                    const index = categoryData.findIndex((item) => item.name === data.value);
+                    setActiveIndex(index);
+                  }}
+                  onMouseLeave={() => {
+                    setActiveIndex(null);
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     </div>
