@@ -6,7 +6,7 @@ import { z } from "zod"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowRight, Mail, Lock, User, UserPlus, Github } from "lucide-react"
+import { Mail, Lock, User, Github } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -88,11 +88,11 @@ export function SignupForm() {
       })
 
       router.push("/login")
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         variant: "destructive",
         title: "Signup failed",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       })
     } finally {
       setIsLoading(false)

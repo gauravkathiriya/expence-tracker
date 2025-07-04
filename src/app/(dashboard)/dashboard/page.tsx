@@ -7,9 +7,8 @@ import { formatCurrency } from "@/lib/utils"
 import { Transaction, Category, TransactionType } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { PlusCircle, ArrowUpCircle, ArrowDownCircle, BarChart3, Clock, TrendingUp, DollarSign, CreditCard, LayoutDashboard, ChartBar } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, BarChart3, TrendingUp, DollarSign, CreditCard, LayoutDashboard, ChartBar } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
-import { Skeleton } from "@/components/ui/skeleton"
 import { DashboardStatsSkeleton, RecentTransactionsSkeleton } from "@/components/transactions/transaction-skeleton"
 import { PageHeader } from "@/components/layout/page-header"
 import { ChartCards } from "@/components/dashboard/chart-cards"
@@ -26,8 +25,8 @@ export default function DashboardPage() {
   const [totalIncome, setTotalIncome] = useState(0)
   const [totalExpense, setTotalExpense] = useState(0)
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([])
-  const [monthlyData, setMonthlyData] = useState<any[]>([])
-  const [categoryData, setCategoryData] = useState<any[]>([])
+  const [monthlyData, setMonthlyData] = useState<{ month: string; income: number; expense: number; savings: number }[]>([])
+  const [categoryData, setCategoryData] = useState<{ name: string; value: number }[]>([])
   const [showCharts, setShowCharts] = useState(false)
 
   useEffect(() => {
@@ -73,11 +72,11 @@ export default function DashboardPage() {
 
         // Process transactions for charts
         processTransactionsForCharts(typedTransactions)
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           variant: "destructive",
           title: "Error loading data",
-          description: error.message,
+          description: error instanceof Error ? error.message : "An unknown error occurred",
         })
       } finally {
         setLoading(false)

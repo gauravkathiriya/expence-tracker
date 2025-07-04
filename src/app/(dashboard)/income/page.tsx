@@ -18,7 +18,6 @@ import { toast } from "@/components/ui/use-toast"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { Transaction, Category } from "@/lib/types"
-import { Skeleton } from "@/components/ui/skeleton"
 import { TransactionTableSkeleton } from "@/components/transactions/transaction-skeleton"
 import { PageHeader } from "@/components/layout/page-header"
 import { FilterOptions, TransactionFilters } from "@/components/transactions/transaction-filters"
@@ -59,11 +58,11 @@ export default function IncomePage() {
 
       setIncomeData(data as Transaction[])
       setFilteredData(data as Transaction[])
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         variant: "destructive",
         title: "Error loading income data",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       })
     } finally {
       setLoading(false)
@@ -85,13 +84,13 @@ export default function IncomePage() {
 
     // Filter by date range
     if (filters.startDate) {
-      result = result.filter(income => 
+      result = result.filter(income =>
         new Date(income.date) >= new Date(filters.startDate)
       )
     }
 
     if (filters.endDate) {
-      result = result.filter(income => 
+      result = result.filter(income =>
         new Date(income.date) <= new Date(filters.endDate)
       )
     }
@@ -104,7 +103,7 @@ export default function IncomePage() {
     // Sort by selected field
     result.sort((a, b) => {
       if (filters.sortBy === "date") {
-        return filters.sortOrder === "asc" 
+        return filters.sortOrder === "asc"
           ? new Date(a.date).getTime() - new Date(b.date).getTime()
           : new Date(b.date).getTime() - new Date(a.date).getTime()
       } else {
@@ -156,11 +155,11 @@ export default function IncomePage() {
 
       // Refresh data
       fetchData()
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         variant: "destructive",
         title: "Error deleting income",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       })
     }
   }
@@ -186,7 +185,7 @@ export default function IncomePage() {
             </div>
           </PageHeader>
 
-          <TransactionFilters 
+          <TransactionFilters
             filters={filters}
             onFilterChange={handleFilterChange}
             onReset={resetFilters}

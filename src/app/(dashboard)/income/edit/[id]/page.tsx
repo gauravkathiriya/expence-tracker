@@ -47,11 +47,11 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
         }
 
         setTransaction(data as Transaction)
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: error.message,
+          description: error instanceof Error ? error.message : "An unknown error occurred",
         })
         router.push("/income")
       } finally {

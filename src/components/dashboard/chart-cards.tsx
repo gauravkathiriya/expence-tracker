@@ -25,8 +25,8 @@ export function ChartCards({
   categoryData, 
   isLoading 
 }: { 
-  monthlyData: any[], 
-  categoryData: any[],
+  monthlyData: Record<string, any>[], 
+  categoryData: Record<string, any>[],
   isLoading: boolean
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -37,36 +37,6 @@ export function ChartCards({
 
   const handlePieLeave = () => {
     setActiveIndex(null);
-  };
-
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value }: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    
-    const isActive = index === activeIndex;
-    
-    if (percent < 0.05 && !isActive) {
-      return null;
-    }
-  
-    return (
-      <text 
-        x={x} 
-        y={y} 
-        fill="white" 
-        textAnchor={x > cx ? 'start' : 'end'} 
-        dominantBaseline="central"
-        className="text-xs font-medium"
-        style={{
-          fontWeight: isActive ? 'bold' : 'normal',
-          fontSize: isActive ? '12px' : '10px',
-        }}
-      >
-        {isActive ? `${name}: ${formatCurrency(value)}` : `${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
   };
 
   if (isLoading) {
@@ -84,7 +54,7 @@ export function ChartCards({
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl">Expense Breakdown</CardTitle>
-            <CardDescription>How you're spending your money</CardDescription>
+            <CardDescription>How you&apos;re spending your money</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Skeleton className="h-[300px] w-[300px] rounded-full" />
@@ -168,7 +138,7 @@ export function ChartCards({
       <Card className="border-none shadow-lg rounded-xl overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white space-y-1">
           <CardTitle className="text-xl">Expense Breakdown</CardTitle>
-          <CardDescription className="text-purple-100">How you're spending your money</CardDescription>
+          <CardDescription className="text-purple-100">How you&apos;re spending your money</CardDescription>
         </CardHeader>
         <CardContent className="p-6 flex flex-col items-center">
           <div className="h-[300px] w-full">
@@ -234,4 +204,35 @@ export function ChartCards({
       </Card>
     </div>
   )
+  
+  function renderCustomizedLabel(props: any) {
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value } = props;
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    const isActive = index === activeIndex;
+    
+    if (percent < 0.05 && !isActive) {
+      return null;
+    }
+  
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="white" 
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        className="text-xs font-medium"
+        style={{
+          fontWeight: isActive ? 'bold' : 'normal',
+          fontSize: isActive ? '12px' : '10px',
+        }}
+      >
+        {isActive ? `${name}: ${formatCurrency(Number(value))}` : `${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  }
 } 

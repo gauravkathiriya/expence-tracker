@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { User, Upload, Loader2, UserCircle, Mail, Edit } from "lucide-react"
+import { User, Edit, UserCircle, Loader2, Mail } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -59,7 +59,7 @@ export default function ProfilePage() {
       try {
         setLoading(true)
         const { data: { user } } = await supabase.auth.getUser()
-        
+
         if (!user) {
           router.push("/login")
           return
@@ -70,7 +70,7 @@ export default function ProfilePage() {
           .select('*')
           .eq('id', user.id)
           .single()
-        
+
         if (error) {
           throw error
         }
@@ -81,11 +81,11 @@ export default function ProfilePage() {
           form.setValue("email", data.email || "")
           form.setValue("bio", data.bio || "")
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           variant: "destructive",
           title: "Error loading profile",
-          description: error.message,
+          description: error instanceof Error ? error.message : "An unknown error occurred",
         })
       } finally {
         setLoading(false)
@@ -163,7 +163,7 @@ export default function ProfilePage() {
         clearInterval(progressInterval)
         setIsUploading(false)
         setUploadProgress(0)
-        
+
         // Update the profile state with new avatar
         setUserProfile({
           ...userProfile,
@@ -177,13 +177,13 @@ export default function ProfilePage() {
       }, 500)
 
       router.refresh()
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIsUploading(false)
       setUploadProgress(0)
       toast({
         variant: "destructive",
         title: "Upload failed",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       })
     }
   }
@@ -218,11 +218,11 @@ export default function ProfilePage() {
       })
 
       router.refresh()
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         variant: "destructive",
         title: "Update failed",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       })
     } finally {
       setLoading(false)
@@ -283,7 +283,7 @@ export default function ProfilePage() {
             {isUploading && (
               <div className="w-full space-y-2 mt-2">
                 <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-purple-600 transition-all duration-200"
                     style={{ width: `${uploadProgress}%` }}
                   />
@@ -322,10 +322,10 @@ export default function ProfilePage() {
                         <FormControl>
                           <div className="relative">
                             <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                              placeholder="Your name" 
+                            <Input
+                              placeholder="Your name"
                               className="pl-10 h-12"
-                              {...field} 
+                              {...field}
                             />
                           </div>
                         </FormControl>
@@ -333,7 +333,7 @@ export default function ProfilePage() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="email"
@@ -343,11 +343,11 @@ export default function ProfilePage() {
                         <FormControl>
                           <div className="relative">
                             <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                              placeholder="your.email@example.com" 
+                            <Input
+                              placeholder="your.email@example.com"
                               className="pl-10 h-12"
                               disabled
-                              {...field} 
+                              {...field}
                             />
                           </div>
                         </FormControl>
@@ -357,7 +357,7 @@ export default function ProfilePage() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="bio"
@@ -365,19 +365,19 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Bio</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            placeholder="Tell us a little about yourself" 
+                          <Textarea
+                            placeholder="Tell us a little about yourself"
                             className="min-h-[120px] resize-none"
-                            {...field} 
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
-                  <Button 
-                    type="submit" 
+
+                  <Button
+                    type="submit"
                     className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
                     disabled={loading}
                   >
