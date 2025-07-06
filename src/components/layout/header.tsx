@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
-import { LogOut, Menu, X, LineChart, CreditCard, Home, DollarSign, Settings, UserCircle, PieChart, BarChart4, Bell, FileText } from "lucide-react"
+import { LogOut, Menu, X, LineChart, CreditCard, Home, DollarSign, Settings, UserCircle, PieChart, BarChart4, Bell, FileText, BookOpen, HelpCircle, Sparkles } from "lucide-react"
 import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
 import { UserProfile } from "@/lib/types"
 
@@ -108,14 +112,65 @@ export function Header() {
               <CreditCard className="h-4 w-4" />
               <span>Expenses</span>
             </Link>
-            <Link href="/recurring" className={getNavItemClass('/recurring')}>
-              <LineChart className="h-4 w-4" />
-              <span>Recurring</span>
-            </Link>
-            <Link href="/reports" className={getNavItemClass('/reports')}>
-              <PieChart className="h-4 w-4" />
-              <span>Reports</span>
-            </Link>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={getNavItemClass('/upcoming')}>
+                  <Sparkles className="h-4 w-4" />
+                  <span>Features</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/recurring">
+                    <LineChart className="mr-2 h-4 w-4" />
+                    <span>Recurring</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/reports">
+                    <PieChart className="mr-2 h-4 w-4" />
+                    <span>Reports</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/upcoming">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    <span>Upcoming Features</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={getNavItemClass('/resources')}>
+                  <BookOpen className="h-4 w-4" />
+                  <span>Resources</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/blog">
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Blog</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/guides">
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    <span>Financial Guides</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/help">
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Help Center</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         
@@ -129,9 +184,34 @@ export function Header() {
             )}
           </Button>
           
-          <Button variant="ghost" size="icon">
-            <FileText className="h-5 w-5 text-muted-foreground" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <HelpCircle className="h-5 w-5 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link href="/help">
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  <span>Help Center</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/guides">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  <span>Financial Guides</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/blog">
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>Blog</span>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <ThemeToggle />
           
@@ -174,6 +254,21 @@ export function Header() {
                   <span>Settings</span>
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link href="/privacy" className="cursor-pointer">
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Privacy Policy</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/terms" className="cursor-pointer">
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Terms of Service</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-danger hover:text-danger focus:text-danger cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" />
@@ -242,6 +337,39 @@ export function Header() {
               <span>Reports</span>
             </Link>
             <Link 
+              href="/upcoming" 
+              className={getNavItemClass('/upcoming')}
+              onClick={toggleMenu}
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>Upcoming Features</span>
+            </Link>
+            <div className="h-px bg-border my-2"></div>
+            <Link 
+              href="/blog" 
+              className={getNavItemClass('/blog')}
+              onClick={toggleMenu}
+            >
+              <FileText className="h-4 w-4" />
+              <span>Blog</span>
+            </Link>
+            <Link 
+              href="/guides" 
+              className={getNavItemClass('/guides')}
+              onClick={toggleMenu}
+            >
+              <BookOpen className="h-4 w-4" />
+              <span>Financial Guides</span>
+            </Link>
+            <Link 
+              href="/help" 
+              className={getNavItemClass('/help')}
+              onClick={toggleMenu}
+            >
+              <HelpCircle className="h-4 w-4" />
+              <span>Help Center</span>
+            </Link>
+            <Link 
               href="/profile" 
               className={getNavItemClass('/profile')}
               onClick={toggleMenu}
@@ -249,17 +377,6 @@ export function Header() {
               <UserCircle className="h-4 w-4" />
               <span>Profile</span>
             </Link>
-            <Button
-              variant="ghost"
-              className="justify-start text-danger hover:text-danger hover:bg-danger/10"
-              onClick={() => {
-                handleLogout()
-                toggleMenu()
-              }}
-            >
-              <LogOut className="mr-1.5 h-4 w-4" />
-              Logout
-            </Button>
           </nav>
         </div>
       )}

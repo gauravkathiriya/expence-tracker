@@ -48,6 +48,16 @@ export function Footer() {
                   Recurring Transactions
                 </Link>
               </li>
+              <li>
+                <Link href="/reports" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Reports
+                </Link>
+              </li>
+              <li>
+                <Link href="/upcoming" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Upcoming Features
+                </Link>
+              </li>
             </ul>
           </div>
           
@@ -62,11 +72,6 @@ export function Footer() {
               <li>
                 <Link href="/guides" className="text-muted-foreground hover:text-foreground transition-colors">
                   Financial Guides
-                </Link>
-              </li>
-              <li>
-                <Link href="/api" className="text-muted-foreground hover:text-foreground transition-colors">
-                  API Documentation
                 </Link>
               </li>
               <li>
