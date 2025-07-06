@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardStats } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency } from "@/lib/utils"
 import { Transaction, Category, TransactionType } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowUpCircle, ArrowDownCircle, BarChart3, TrendingUp, DollarSign, CreditCard, LayoutDashboard, ChartBar } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, BarChart3, TrendingUp, DollarSign, CreditCard, LayoutDashboard, ChartBar, PlusCircle, Wallet, ArrowRight } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { DashboardStatsSkeleton, RecentTransactionsSkeleton } from "@/components/transactions/transaction-skeleton"
 import { PageHeader } from "@/components/layout/page-header"
@@ -147,93 +147,108 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container space-y-8 py-8">
-      <PageHeader
-        title="Dashboard"
-        description="Manage your finances and track your spending"
-        icon={LayoutDashboard}
-      >
-        <div className="flex items-center gap-2">
-          <ExportData data={recentTransactions} filename="all_transactions" />
-          <Button asChild variant="default" className="bg-green-600 hover:bg-green-700 text-white">
-            <Link href="/income/new">
-              <ArrowUpCircle className="mr-2 h-4 w-4" /> Add Income
-            </Link>
-          </Button>
-          <Button asChild variant="default" className="bg-red-600 hover:bg-red-700 text-white">
-            <Link href="/expenses/new">
-              <ArrowDownCircle className="mr-2 h-4 w-4" /> Add Expense
-            </Link>
-          </Button>
-        </div>
-      </PageHeader>
+    <div className="space-y-8">
+      <div className="bg-gradient-to-r from-primary/10 to-accent/10 dark:from-primary/5 dark:to-accent/5 rounded-xl p-6 mb-8">
+        <PageHeader
+          title="Financial Dashboard"
+          description="Track, analyze, and optimize your financial health"
+          icon={LayoutDashboard}
+        >
+          <div className="flex items-center gap-2">
+            <ExportData data={recentTransactions} filename="all_transactions" />
+            <Button asChild variant="gradient">
+              <Link href="/income/new">
+                <PlusCircle className="mr-2 h-4 w-4" /> New Transaction
+              </Link>
+            </Button>
+          </div>
+        </PageHeader>
+      </div>
 
       {loading ? (
         <DashboardStatsSkeleton />
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="overflow-hidden border-none shadow-md rounded-xl transition-all hover:shadow-lg">
-            <div className="absolute right-2 top-2 h-12 w-12 rounded-full bg-green-100 flex items-center justify-center shadow-sm">
-              <TrendingUp className="h-6 w-6 text-green-600" />
-            </div>
+          <CardStats type="income" className="card-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Total Income</CardTitle>
+              <CardTitle className="text-lg font-medium flex items-center">
+                <TrendingUp className="h-5 w-5 mr-2 text-income" /> Total Income
+              </CardTitle>
               <CardDescription>Your total income to date</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline">
-                <p className="text-3xl font-bold text-green-600">
+                <p className="text-3xl font-bold text-income">
                   {formatCurrency(totalIncome)}
                 </p>
                 <p className="ml-2 text-sm text-muted-foreground">lifetime</p>
               </div>
+              <div className="mt-4">
+                <Button variant="ghost" size="sm" className="px-0 text-income" asChild>
+                  <Link href="/income">
+                    View Income <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </CardContent>
-          </Card>
-          <Card className="overflow-hidden border-none shadow-md rounded-xl transition-all hover:shadow-lg">
-            <div className="absolute right-2 top-2 h-12 w-12 rounded-full bg-red-100 flex items-center justify-center shadow-sm">
-              <CreditCard className="h-6 w-6 text-red-600" />
-            </div>
+          </CardStats>
+          
+          <CardStats type="expense" className="card-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Total Expense</CardTitle>
+              <CardTitle className="text-lg font-medium flex items-center">
+                <CreditCard className="h-5 w-5 mr-2 text-expense" /> Total Expense
+              </CardTitle>
               <CardDescription>Your total expenses to date</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline">
-                <p className="text-3xl font-bold text-red-600">
+                <p className="text-3xl font-bold text-expense">
                   {formatCurrency(totalExpense)}
                 </p>
                 <p className="ml-2 text-sm text-muted-foreground">lifetime</p>
               </div>
+              <div className="mt-4">
+                <Button variant="ghost" size="sm" className="px-0 text-expense" asChild>
+                  <Link href="/expenses">
+                    View Expenses <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </CardContent>
-          </Card>
-          <Card className="overflow-hidden border-none shadow-md rounded-xl transition-all hover:shadow-lg">
-            <div className="absolute right-2 top-2 h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center shadow-sm">
-              <DollarSign className="h-6 w-6 text-blue-600" />
-            </div>
+          </CardStats>
+          
+          <CardStats className="card-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Balance</CardTitle>
+              <CardTitle className="text-lg font-medium flex items-center">
+                <Wallet className="h-5 w-5 mr-2 text-primary" /> Balance
+              </CardTitle>
               <CardDescription>Current balance</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline">
-                <p className={`text-3xl font-bold ${totalIncome - totalExpense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <p className={`text-3xl font-bold ${totalIncome - totalExpense >= 0 ? 'text-income' : 'text-expense'}`}>
                   {formatCurrency(totalIncome - totalExpense)}
                 </p>
                 <p className="ml-2 text-sm text-muted-foreground">available</p>
               </div>
+              <div className="mt-4">
+                <Button variant="glass" size="sm" className="shadow-sm" onClick={() => setShowCharts(!showCharts)}>
+                  {showCharts ? "Hide Analytics" : "View Analytics"}
+                </Button>
+              </div>
             </CardContent>
-          </Card>
+          </CardStats>
         </div>
       )}
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight flex items-center">
-          <ChartBar className="mr-2 h-5 w-5" /> Analytics
+      <div className="flex items-center justify-between mt-10">
+        <h2 className="text-xl font-bold tracking-tight flex items-center">
+          <ChartBar className="mr-2 h-5 w-5 text-primary" /> Financial Analytics
         </h2>
         <Button
           variant="outline"
           onClick={() => setShowCharts(!showCharts)}
-          className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 dark:from-blue-950 dark:to-purple-950 dark:hover:from-blue-900 dark:hover:to-purple-900 border-blue-200 dark:border-blue-800"
+          className="border-primary/20 hover:border-primary/40"
         >
           {showCharts ? "Hide Charts" : "Show Charts"}
         </Button>
@@ -247,66 +262,87 @@ export default function DashboardPage() {
         />
       )}
 
-      <Card className="border-none shadow-md rounded-xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-          <CardTitle className="text-xl">Recent Transactions</CardTitle>
-          <CardDescription className="text-blue-100">
-            Your most recent income and expense entries
-          </CardDescription>
-        </CardHeader>
-        {loading ? (
-          <div className="p-6">
-            <RecentTransactionsSkeleton />
+      <Card variant="glass" className="card-shadow">
+        <CardHeader className="border-b bg-muted/50">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-medium flex items-center">
+              <BarChart3 className="mr-2 h-5 w-5 text-primary" /> Recent Transactions
+            </CardTitle>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/expenses">
+                View All
+              </Link>
+            </Button>
           </div>
-        ) : (
-          <>
-            <CardContent className="p-0">
-              {recentTransactions.length > 0 ? (
-                <div className="divide-y">
-                  {recentTransactions.map((transaction) => (
-                    <div 
-                      key={transaction.id} 
-                      className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-900/10 transition-colors"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                          transaction.category === Category.Income ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20'
-                        }`}>
-                          {transaction.category === Category.Income ? (
-                            <ArrowUpCircle className="h-5 w-5 text-green-600" />
-                          ) : (
-                            <ArrowDownCircle className="h-5 w-5 text-red-600" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{transaction.description || transaction.type}</p>
-                          <p className="text-sm text-muted-foreground">{new Date(transaction.date).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                      <p className={`font-medium ${transaction.category === Category.Income ? 'text-green-600' : 'text-red-600'}`}>
-                        {transaction.category === Category.Income ? '+' : '-'}
-                        {formatCurrency(transaction.amount)}
+        </CardHeader>
+        <CardContent className="p-0">
+          {loading ? (
+            <RecentTransactionsSkeleton />
+          ) : recentTransactions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="rounded-full bg-muted p-3">
+                <CreditCard className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h3 className="mt-4 text-lg font-medium">No transactions yet</h3>
+              <p className="mt-2 text-sm text-muted-foreground max-w-sm">
+                Start tracking your finances by adding your first income or expense transaction.
+              </p>
+              <div className="mt-6 flex gap-2">
+                <Button asChild variant="success" size="sm">
+                  <Link href="/income/new">
+                    <ArrowUpCircle className="mr-2 h-4 w-4" /> Add Income
+                  </Link>
+                </Button>
+                <Button asChild variant="destructive" size="sm">
+                  <Link href="/expenses/new">
+                    <ArrowDownCircle className="mr-2 h-4 w-4" /> Add Expense
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="divide-y">
+              {recentTransactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className={`rounded-full p-2 ${
+                      transaction.category === Category.Income 
+                        ? 'bg-green-100 dark:bg-green-900/30' 
+                        : 'bg-red-100 dark:bg-red-900/30'
+                    }`}>
+                      {transaction.category === Category.Income ? (
+                        <ArrowUpCircle className="h-5 w-5 text-income" />
+                      ) : (
+                        <ArrowDownCircle className="h-5 w-5 text-expense" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{transaction.description}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(transaction.date).toLocaleDateString()} • {transaction.type}
                       </p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
-                  <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-2">No transactions yet.</p>
-                  <div className="flex gap-2 mt-2">
-                    <Button asChild size="sm" variant="outline">
-                      <Link href="/income/new">Add Income</Link>
-                    </Button>
-                    <Button asChild size="sm" variant="outline">
-                      <Link href="/expenses/new">Add Expense</Link>
+                  </div>
+                  <div className="flex items-center">
+                    <span className={`font-medium ${
+                      transaction.category === Category.Income ? 'text-income' : 'text-expense'
+                    }`}>
+                      {transaction.category === Category.Income ? '+' : '-'}{formatCurrency(transaction.amount)}
+                    </span>
+                    <Button variant="ghost" size="icon-sm" asChild className="ml-2">
+                      <Link href={`/${transaction.category === Category.Income ? 'income' : 'expenses'}/edit/${transaction.id}`}>
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
                     </Button>
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </>
-        )}
+              ))}
+            </div>
+          )}
+        </CardContent>
       </Card>
     </div>
   )

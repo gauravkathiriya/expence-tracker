@@ -17,8 +17,10 @@ import {
 import { formatCurrency } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useState } from "react"
+import { BarChart3, PieChart as PieChartIcon } from "lucide-react"
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+// Updated colors to match our finance theme
+const COLORS = ['#0ea5e9', '#14b8a6', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981'];
 
 type ChartData = Record<string, string | number>;
 
@@ -44,18 +46,22 @@ export function ChartCards({
   if (isLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card variant="glass" className="card-shadow">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">Monthly Overview</CardTitle>
+            <CardTitle className="text-lg font-medium flex items-center">
+              <BarChart3 className="h-5 w-5 mr-2 text-primary" /> Monthly Overview
+            </CardTitle>
             <CardDescription>Your income and expenses by month</CardDescription>
           </CardHeader>
           <CardContent>
             <Skeleton className="h-[300px] w-full" />
           </CardContent>
         </Card>
-        <Card>
+        <Card variant="glass" className="card-shadow">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">Expense Breakdown</CardTitle>
+            <CardTitle className="text-lg font-medium flex items-center">
+              <PieChartIcon className="h-5 w-5 mr-2 text-primary" /> Expense Breakdown
+            </CardTitle>
             <CardDescription>How you&apos;re spending your money</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -68,10 +74,12 @@ export function ChartCards({
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white space-y-1">
-          <CardTitle className="text-xl">Monthly Overview</CardTitle>
-          <CardDescription className="text-blue-100">Your income and expenses by month</CardDescription>
+      <Card variant="glass" className="card-shadow">
+        <CardHeader className="border-b bg-muted/50">
+          <CardTitle className="text-lg font-medium flex items-center">
+            <BarChart3 className="h-5 w-5 mr-2 text-primary" /> Monthly Overview
+          </CardTitle>
+          <CardDescription>Your income and expenses by month</CardDescription>
         </CardHeader>
         <CardContent className="p-6">
           <div className="h-[300px]">
@@ -89,28 +97,30 @@ export function ChartCards({
                 <XAxis
                   dataKey="month"
                   tick={{ fontSize: 12 }}
-                  axisLine={{ stroke: '#eee' }}
+                  axisLine={{ stroke: 'var(--border)' }}
                   tickLine={false}
                 />
                 <YAxis
                   tickFormatter={(value) => `$${Math.abs(value)}`}
                   tick={{ fontSize: 12 }}
-                  axisLine={{ stroke: '#eee' }}
+                  axisLine={{ stroke: 'var(--border)' }}
                   tickLine={false}
                 />
                 <Tooltip
                   formatter={(value) => [`${formatCurrency(Number(value))}`, ""]}
                   contentStyle={{
-                    borderRadius: '8px',
+                    borderRadius: 'var(--radius)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                     border: 'none',
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--card-foreground)'
                   }}
                   cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                 />
                 <Bar
                   dataKey="income"
                   name="Income"
-                  fill="#4ade80"
+                  fill="var(--income)"
                   radius={[4, 4, 0, 0]}
                   barSize={30}
                   animationDuration={1500}
@@ -118,7 +128,7 @@ export function ChartCards({
                 <Bar
                   dataKey="expense"
                   name="Expense"
-                  fill="#f87171"
+                  fill="var(--expense)"
                   radius={[4, 4, 0, 0]}
                   barSize={30}
                   animationDuration={1500}
@@ -126,7 +136,7 @@ export function ChartCards({
                 <Bar
                   dataKey="savings"
                   name="Savings"
-                  fill="#60a5fa"
+                  fill="var(--primary)"
                   radius={[4, 4, 0, 0]}
                   barSize={30}
                   animationDuration={1500}
@@ -137,10 +147,12 @@ export function ChartCards({
         </CardContent>
       </Card>
 
-      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white space-y-1">
-          <CardTitle className="text-xl">Expense Breakdown</CardTitle>
-          <CardDescription className="text-purple-100">How you&apos;re spending your money</CardDescription>
+      <Card variant="glass" className="card-shadow">
+        <CardHeader className="border-b bg-muted/50">
+          <CardTitle className="text-lg font-medium flex items-center">
+            <PieChartIcon className="h-5 w-5 mr-2 text-primary" /> Expense Breakdown
+          </CardTitle>
+          <CardDescription>How you&apos;re spending your money</CardDescription>
         </CardHeader>
         <CardContent className="p-6 flex flex-col items-center">
           <div className="h-[300px] w-full">
@@ -212,9 +224,11 @@ export function ChartCards({
                 <Tooltip
                   formatter={(value) => formatCurrency(Number(value))}
                   contentStyle={{
-                    borderRadius: '8px',
+                    borderRadius: 'var(--radius)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                     border: 'none',
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--card-foreground)'
                   }}
                 />
                 <Legend
