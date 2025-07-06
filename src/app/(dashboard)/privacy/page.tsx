@@ -60,18 +60,13 @@ export default function PrivacyPolicyPage() {
       </div>
 
       <div className="prose prose-slate dark:prose-invert max-w-none">
-        <p className="flex items-center text-muted-foreground">
-          <Clock className="inline-block mr-2 h-4 w-4" />
-          Last updated: June 15, 2023
-        </p>
-
         <h2 className="flex items-center gap-2">
           <Shield className="h-6 w-6 text-primary" />
           Introduction
         </h2>
         <p>
-          At FinanceTracker, we respect your privacy and are committed to protecting your personal data. 
-          This Privacy Policy explains how we collect, use, disclose, and safeguard your information when 
+          At FinanceTracker, we respect your privacy and are committed to protecting your personal data.
+          This Privacy Policy explains how we collect, use, disclose, and safeguard your information when
           you use our financial management application.
         </p>
 
@@ -81,7 +76,7 @@ export default function PrivacyPolicyPage() {
             <h3 className="text-lg font-medium text-amber-800 dark:text-amber-300 m-0">Important Notice</h3>
           </div>
           <p className="text-amber-800 dark:text-amber-300 text-sm mb-0">
-            By using our application, you agree to the collection and use of information in accordance with this policy. 
+            By using our application, you agree to the collection and use of information in accordance with this policy.
             If you do not agree with our policies, please do not use our service.
           </p>
         </div>
@@ -97,7 +92,7 @@ export default function PrivacyPolicyPage() {
               <User className="h-3 w-3 text-primary" />
             </div>
             <div>
-              <strong>Personal Information:</strong> Name, email address, and other contact details you provide 
+              <strong>Personal Information:</strong> Name, email address, and other contact details you provide
               when creating an account.
             </div>
           </li>
@@ -106,7 +101,7 @@ export default function PrivacyPolicyPage() {
               <Database className="h-3 w-3 text-primary" />
             </div>
             <div>
-              <strong>Financial Information:</strong> Transaction data, account balances, income sources, 
+              <strong>Financial Information:</strong> Transaction data, account balances, income sources,
               expenses, and other financial information you choose to input into the application.
             </div>
           </li>
@@ -115,7 +110,7 @@ export default function PrivacyPolicyPage() {
               <Activity className="h-3 w-3 text-primary" />
             </div>
             <div>
-              <strong>Usage Data:</strong> Information about how you interact with our application, including 
+              <strong>Usage Data:</strong> Information about how you interact with our application, including
               features used, time spent, and actions taken.
             </div>
           </li>
@@ -124,13 +119,13 @@ export default function PrivacyPolicyPage() {
               <Lock className="h-3 w-3 text-primary" />
             </div>
             <div>
-              <strong>Device Information:</strong> Information about your device, operating system, browser 
+              <strong>Device Information:</strong> Information about your device, operating system, browser
               type, IP address, and other technical details.
             </div>
           </li>
         </ul>
 
-        <h2 className="flex items-center gap-2">
+        <h2 className="flex items-center gap-2 mt-4">
           <Activity className="h-6 w-6 text-primary" />
           How We Use Your Information
         </h2>
@@ -230,83 +225,41 @@ export default function PrivacyPolicyPage() {
           Data Security
         </h2>
         <p>
-          We implement appropriate technical and organizational measures to protect your personal 
-          information from unauthorized access, disclosure, alteration, or destruction. These measures 
-          include encryption, secure socket layer technology (SSL), regular security assessments, and 
+          We implement appropriate technical and organizational measures to protect your personal
+          information from unauthorized access, disclosure, alteration, or destruction. These measures
+          include encryption, secure socket layer technology (SSL), regular security assessments, and
           strict access controls.
         </p>
 
-        <h2 className="flex items-center gap-2">
+        <h2 className="flex items-center gap-2 mt-4">
           <ExternalLink className="h-6 w-6 text-primary" />
           Third-Party Services
         </h2>
         <p>
-          Our application may integrate with third-party services to enhance functionality. These 
-          third parties may collect information about you when you use our application. We encourage 
+          Our application may integrate with third-party services to enhance functionality. These
+          third parties may collect information about you when you use our application. We encourage
           you to review the privacy policies of these third parties.
         </p>
 
-        <h2 className="flex items-center gap-2">
-          <Users className="h-6 w-6 text-primary" />
-          Your Rights
-        </h2>
-        <p>Depending on your location, you may have certain rights regarding your personal information, including:</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-          <div className="bg-muted/30 p-3 rounded-lg flex items-start">
-            <div className="mr-2 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-              <FileCheck className="h-3 w-3 text-primary" />
-            </div>
-            <div>The right to access your personal information</div>
-          </div>
-          <div className="bg-muted/30 p-3 rounded-lg flex items-start">
-            <div className="mr-2 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-              <FileCheck className="h-3 w-3 text-primary" />
-            </div>
-            <div>The right to correct inaccurate or incomplete information</div>
-          </div>
-          <div className="bg-muted/30 p-3 rounded-lg flex items-start">
-            <div className="mr-2 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-              <FileCheck className="h-3 w-3 text-primary" />
-            </div>
-            <div>The right to delete your personal information</div>
-          </div>
-          <div className="bg-muted/30 p-3 rounded-lg flex items-start">
-            <div className="mr-2 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-              <FileCheck className="h-3 w-3 text-primary" />
-            </div>
-            <div>The right to restrict or object to processing of your personal information</div>
-          </div>
-          <div className="bg-muted/30 p-3 rounded-lg flex items-start">
-            <div className="mr-2 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-              <FileCheck className="h-3 w-3 text-primary" />
-            </div>
-            <div>The right to data portability</div>
-          </div>
-        </div>
-
-        <h2 className="flex items-center gap-2">
+        <h2 className="flex items-center gap-2 mt-4">
           <Users className="h-6 w-6 text-primary" />
           Children's Privacy
         </h2>
         <p>
-          Our application is not intended for children under 16 years of age. We do not knowingly collect 
-          personal information from children under 16. If we learn we have collected personal information 
+          Our application is not intended for children under 16 years of age. We do not knowingly collect
+          personal information from children under 16. If we learn we have collected personal information
           from a child under 16, we will delete that information promptly.
         </p>
 
-        <h2 className="flex items-center gap-2">
+        <h2 className="flex items-center gap-2 mt-4">
           <Clock className="h-6 w-6 text-primary" />
           Changes to This Privacy Policy
         </h2>
         <p>
-          We may update our Privacy Policy from time to time. We will notify you of any changes by 
+          We may update our Privacy Policy from time to time. We will notify you of any changes by
           posting the new Privacy Policy on this page and updating the "Last updated" date.
         </p>
 
-        <h2 className="flex items-center gap-2">
-          <ExternalLink className="h-6 w-6 text-primary" />
-          Contact Us
-        </h2>
         <div className="bg-muted/30 p-5 rounded-lg mt-4">
           <p>
             If you have any questions about this Privacy Policy, please contact us at:
@@ -318,6 +271,13 @@ export default function PrivacyPolicyPage() {
           <p className="flex items-center gap-2 mt-2">
             <ExternalLink className="h-4 w-4 text-primary" />
             <strong>Address:</strong> 123 Financial Street, Suite 100, San Francisco, CA 94105
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center w-full mb-8">
+          <p className="flex items-center text-muted-foreground">
+            <Clock className="inline-block mr-2 h-4 w-4" />
+            Last updated: June 15, 2023
           </p>
         </div>
       </div>

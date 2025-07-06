@@ -60,11 +60,6 @@ export default function TermsOfServicePage() {
       </div>
 
       <div className="prose prose-slate dark:prose-invert max-w-none">
-        <p className="flex items-center text-muted-foreground">
-          <Clock className="inline-block mr-2 h-4 w-4" />
-          Last updated: June 15, 2023
-        </p>
-
         <h2 className="flex items-center gap-2">
           <CheckCircle className="h-6 w-6 text-primary" />
           Agreement to Terms
@@ -153,8 +148,8 @@ export default function TermsOfServicePage() {
             When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account.
           </p>
           <div className="flex items-start bg-muted/30 p-4 rounded-lg">
-            <AlertTriangle className="h-5 w-5 text-warning mr-3 mt-0.5 flex-shrink-0" />
-            <p className="text-sm m-0">
+            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mr-3 mt-0.5 flex-shrink-0" />
+            <p className="text-amber-800 dark:text-amber-300 text-sm m-0">
               You are responsible for safeguarding the password that you use to access the service and for any activities or actions under your password. You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.
             </p>
           </div>
@@ -285,42 +280,6 @@ export default function TermsOfServicePage() {
           </div>
         </div>
 
-        <h2 className="flex items-center gap-2">
-          <AlertTriangle className="h-6 w-6 text-primary" />
-          Disclaimer
-        </h2>
-        <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-warning">
-          <p className="mb-0">
-            Your use of the service is at your sole risk. The service is provided on an "AS IS" and "AS AVAILABLE" basis. The service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance.
-          </p>
-        </div>
-
-        <h2 className="flex items-center gap-2">
-          <Scale className="h-6 w-6 text-primary" />
-          Governing Law
-        </h2>
-        <p>
-          These Terms shall be governed and construed in accordance with the laws of the United States, without regard to its conflict of law provisions.
-        </p>
-        <p>
-          Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.
-        </p>
-
-        <h2 className="flex items-center gap-2">
-          <GlobeLock className="h-6 w-6 text-primary" />
-          Changes to Terms
-        </h2>
-        <div className="flex items-start bg-muted/30 p-4 rounded-lg">
-          <Clock className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-          <p className="text-sm m-0">
-            We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
-          </p>
-        </div>
-
-        <h2 className="flex items-center gap-2">
-          <Mail className="h-6 w-6 text-primary" />
-          Contact Us
-        </h2>
         <div className="bg-muted/30 p-5 rounded-lg mt-4">
           <p>
             If you have any questions about these Terms, please contact us at:
@@ -335,6 +294,13 @@ export default function TermsOfServicePage() {
               <strong>Address:</strong> 123 Financial Street, Suite 100, San Francisco, CA 94105
             </div>
           </div>
+        </div>
+
+        <div className="flex items-center justify-center w-full mb-8">
+          <p className="flex items-center text-muted-foreground">
+            <Clock className="inline-block mr-2 h-4 w-4" />
+            Last updated: June 15, 2023
+          </p>
         </div>
       </div>
     </div>

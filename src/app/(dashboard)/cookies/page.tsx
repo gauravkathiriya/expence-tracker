@@ -60,11 +60,6 @@ export default function CookiePolicyPage() {
       </div>
 
       <div className="prose prose-slate dark:prose-invert max-w-none">
-        <p className="flex items-center text-muted-foreground">
-          <Clock className="inline-block mr-2 h-4 w-4" />
-          Last updated: June 15, 2023
-        </p>
-
         <h2 className="flex items-center gap-2">
           <Info className="h-6 w-6 text-primary" />
           What Are Cookies
@@ -101,7 +96,7 @@ export default function CookiePolicyPage() {
             <h3 className="text-lg font-medium text-amber-800 dark:text-amber-300 m-0">Important Notice</h3>
           </div>
           <p className="text-amber-800 dark:text-amber-300 text-sm mb-0">
-            By continuing to use our website, you consent to our use of cookies in accordance with this Cookie Policy. 
+            By continuing to use our website, you consent to our use of cookies in accordance with this Cookie Policy.
             If you do not agree to our use of cookies, you should set your browser settings accordingly or not use our website.
           </p>
         </div>
@@ -229,10 +224,10 @@ export default function CookiePolicyPage() {
         <p>
           If you'd like to delete cookies or instruct your web browser to delete or refuse cookies, please visit the help pages of your web browser.
         </p>
-        <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-warning">
+        <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-warning mt-4">
           <div className="flex items-start">
             <AlertCircle className="h-5 w-5 text-warning mr-3 mt-0.5 flex-shrink-0" />
-            <p className="text-sm m-0">
+            <p className="text-amber-800 dark:text-amber-300 text-sm m-0">
               Please note, however, that if you delete cookies or refuse to accept them, you might not be able to use all of the features we offer, you may not be able to store your preferences, and some of our pages might not display properly.
             </p>
           </div>
@@ -258,71 +253,7 @@ export default function CookiePolicyPage() {
           </div>
         </div>
 
-        <div className="mt-6 space-y-4">
-          <h3 className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5 text-primary" />
-            For Chrome web browser
-          </h3>
-          <p>
-            Visit <a href="https://support.google.com/accounts/answer/32050" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">this page from Google <ExternalLink className="ml-1 h-3 w-3" /></a>.
-          </p>
-
-          <h3 className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5 text-primary" />
-            For Internet Explorer web browser
-          </h3>
-          <p>
-            Visit <a href="https://support.microsoft.com/en-us/help/17442/windows-internet-explorer-delete-manage-cookies" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">this page from Microsoft <ExternalLink className="ml-1 h-3 w-3" /></a>.
-          </p>
-
-          <h3 className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5 text-primary" />
-            For Firefox web browser
-          </h3>
-          <p>
-            Visit <a href="https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">this page from Mozilla <ExternalLink className="ml-1 h-3 w-3" /></a>.
-          </p>
-
-          <h3 className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5 text-primary" />
-            For Safari web browser
-          </h3>
-          <p>
-            Visit <a href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">this page from Apple <ExternalLink className="ml-1 h-3 w-3" /></a>.
-          </p>
-
-          <h3 className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5 text-primary" />
-            For any other web browser
-          </h3>
-          <p>
-            Please search for "how to delete cookies" in your preferred search engine.
-          </p>
-        </div>
-
-        <h2 className="flex items-center gap-2">
-          <FileText className="h-6 w-6 text-primary" />
-          Where Can You Find More Information About Cookies
-        </h2>
-        <p>
-          You can learn more about cookies at the following third-party websites:
-        </p>
-        <ul className="space-y-2 pl-0 list-none">
-          <li className="flex items-center">
-            <ExternalLink className="h-4 w-4 text-primary mr-2" />
-            <a href="https://www.allaboutcookies.org/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">
-              AllAboutCookies <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-          </li>
-          <li className="flex items-center">
-            <ExternalLink className="h-4 w-4 text-primary mr-2" />
-            <a href="https://www.networkadvertising.org/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">
-              Network Advertising Initiative <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-          </li>
-        </ul>
-
-        <h2 className="flex items-center gap-2">
+        <h2 className="flex items-center gap-2 mt-8">
           <Clock className="h-6 w-6 text-primary" />
           Changes to This Cookie Policy
         </h2>
@@ -336,10 +267,11 @@ export default function CookiePolicyPage() {
           </p>
         </div>
 
-        <h2 className="flex items-center gap-2">
+        <h2 className="flex items-center gap-2 mt-4">
           <Mail className="h-6 w-6 text-primary" />
           Contact Us
         </h2>
+
         <div className="bg-muted/30 p-5 rounded-lg mt-4">
           <p>
             If you have any questions about our Cookie Policy, please contact us at:
@@ -354,6 +286,13 @@ export default function CookiePolicyPage() {
               <strong>Address:</strong> 123 Financial Street, Suite 100, San Francisco, CA 94105
             </div>
           </div>
+        </div>
+
+        <div className="flex items-center justify-center w-full mb-8">
+          <p className="flex items-center text-muted-foreground">
+            <Clock className="inline-block mr-2 h-4 w-4" />
+            Last updated: June 15, 2023
+          </p>
         </div>
       </div>
     </div>
